@@ -1,0 +1,43 @@
+syntax = "proto3";
+package services.cass_storage;
+
+import "msg_data.proto";
+
+service CassStorage {
+  rpc WriteToSession(CassMsgRequest) returns (CassMsgReply) {};
+  rpc WriteToInbox(CassMsgRequest) returns (CassMsgReply) {};
+  rpc ReadInbox(CassInboxRequest) returns (CassInboxReply) {}
+  rpc ReadSession(CassSessionRequest) returns (stream CassSessionReply) {}
+}
+
+enum CassMessageStatusCode {
+  CASS_MSG_SUCCESS = 0;
+  CASS_MSG_TIMEOUT = 1;
+  CASS_MSG_FAILED = 2;
+}
+
+message CassMsgRequest {
+  msg_data.MsgData message_data = 1;
+  int64 message_id = 2;
+  int64 delivery_id = 3;
+}
+
+message CassMsgReply { CassMessageStatusCode code = 1; }
+
+message CassInboxRequest {
+  uint32 uid = 1;
+  int64 last_max_msg_id = 2;
+}
+
+message CassInboxReply {
+  CassMessageStatusCode code = 1;
+  repeated msg_data.ServerMsgData messages = 2;
+}
+
+message CassSessionRequest { repeated int64 session_ids = 1; }
+
+message CassSessionReply {
+  int64 session_id = 1;
+  bytes token = 2;
+  repeated msg_data.ServerMsgData messages = 3;
+}

@@ -1,0 +1,126 @@
+syntax = "proto3";
+
+message PullMsgs {
+  repeated MsgData msgs = 1;
+  bool isEnd = 2;
+}
+
+enum PullOrder {
+  PullOrderAsc = 0;
+  PillOrderDesc = 1;
+}
+
+message PullMessageBySeqsReq {
+  uint32 uid = 1;
+  repeated SeqRange seqRanges = 2;
+  PullOrder order = 3;
+}
+
+message SeqRange {
+  string conversion_id = 1;
+  int64 begin = 2;
+  int64 end = 3;
+  int64 num = 4;
+}
+
+message PullMessageBySeqsResp {
+  map<string, PullMsgs> msgs = 1;
+  map<string, PullMsgs> notificationMsgs = 2;
+}
+
+message GetMaxSeqReq { uint32 uid = 1; }
+message GetMaxSeqResp {
+  map<string, int64> maxSeqs = 1;
+  map<string, int64> minSeqs = 2;
+}
+
+message UserSendMsgResp {
+  string serverMsgId = 1;
+  string clientMsgId = 2;
+  int64 sendTime = 3;
+}
+
+message MsgData {
+  string sendId = 1;
+  string recvId = 2;
+  string groupId = 3;
+  string cliengMsgId = 4;
+  string serverMsgId = 5;
+  int32 senderPlatformId = 6;
+  string senderNickname = 7;
+  int32 sessionType = 9;
+  int32 msgFrom = 10;
+  int32 contentType = 11;
+  bytes content = 12;
+  int64 seq = 13;
+  int64 sendTime = 15;
+  int64 createTime = 16;
+  int32 status = 17;
+  bool isRead = 18;
+  map<string, bool> options = 19;
+  repeated string atUserIDList = 21;
+  string attachedInfo = 22;
+  string ex = 23;
+}
+
+message PushMessages {
+  map<string, PullMsgs> msgs = 1;
+  map<string, PullMsgs> notificationMsgs = 2;
+}
+
+message seqs { repeated int64 seqs = 1; }
+
+message DeleteMessageTips {
+  string opUserId = 1;
+  string userId = 2;
+  repeated int64 seqs = 3;
+}
+
+service msg {
+  //获取最小最大seq（包括用户的，以及指定群组的）
+  rpc GetMaxSeq(sdkws.GetMaxSeqReq) returns (sdkws.GetMaxSeqResp);
+  rpc GetConversationMaxSeq(GetConversationMaxSeqReq)
+      returns (GetConversationMaxSeqResp);
+  //拉取历史消息（包括用户的，以及指定群组的）
+  rpc PullMessageBySeqs(sdkws.PullMessageBySeqsReq)
+      returns (sdkws.PullMessageBySeqsResp);
+  //发送消息
+  rpc SendMsg(SendMsgReq) returns (SendMsgResp);
+
+  // 全量清空指定会话消息 重置min seq 比最大seq大1
+  rpc ClearConversationsMsg(ClearConversationsMsgReq)
+      returns (ClearConversationsMsgResp);
+  // 删除用户全部消息 重置min seq 比最大seq大1
+  rpc UserClearAllMsg(UserClearAllMsgReq) returns (UserClearAllMsgResp);
+  // 用户标记删除部分消息by Seq
+  rpc DeleteMsgs(DeleteMsgsReq) returns (DeleteMsgsResp);
+  // seq物理删除消息
+  rpc DeleteMsgPhysicalBySeq(DeleteMsgPhysicalBySeqReq)
+      returns (DeleteMsgPhysicalBySeqResp);
+  // 物理删除消息by 时间
+  rpc DeleteMsgPhysical(DeleteMsgPhysicalReq) returns (DeleteMsgPhysicalResp);
+
+  //设置消息是否发送成功-针对api发送的消
+  rpc SetSendMsgStatus(SetSendMsgStatusReq) returns (SetSendMsgStatusResp);
+  //获取消息发送状态
+  rpc GetSendMsgStatus(GetSendMsgStatusReq) returns (GetSendMsgStatusResp);
+  rpc RevokeMsg(RevokeMsgReq) returns (RevokeMsgResp);
+  // mark as read
+  rpc MarkMsgsAsRead(MarkMsgsAsReadReq) returns (MarkMsgsAsReadResp);
+  rpc MarkConversationAsRead(MarkConversationAsReadReq)
+      returns (MarkConversationAsReadResp);
+  rpc SetConversationHasReadSeq(SetConversationHasReadSeqReq)
+      returns (SetConversationHasReadSeqResp);
+  // 修改消息
+  rpc SetMessageReactionExtensions(SetMessageReactionExtensionsReq)
+      returns (SetMessageReactionExtensionsResp);
+  rpc GetMessagesReactionExtensions(GetMessagesReactionExtensionsReq)
+      returns (GetMessagesReactionExtensionsResp);
+  rpc AddMessageReactionExtensions(ModifyMessageReactionExtensionsReq)
+      returns (ModifyMessageReactionExtensionsResp);
+  rpc DeleteMessageReactionExtensions(DeleteMessagesReactionExtensionsReq)
+      returns (DeleteMessagesReactionExtensionsResp);
+
+  rpc GetConversationsHasReadAndMaxSeq(GetConversationsHasReadAndMaxSeqReq)
+      returns (GetConversationsHasReadAndMaxSeqResp);
+}

@@ -1,0 +1,39 @@
+syntax = "proto3";
+package services.downstream;
+
+import "msg_data.proto";
+
+service DownstreamTransfer {
+  rpc DeliverReadEvent(ReadModelEvent) returns (DeliverReadEventReply) {};
+  rpc PullInboxMsg(PullInboxRequest) returns (PullInboxReply) {};
+  // rpc PullGroupMsg(PullGroupRequest) returns (PullGroupReply) {};
+}
+
+enum ReadModelEventType {
+  READ_MODEL_SINGLE_CHAT = 0;
+  READ_MODEL_GROUP_CHAT = 1;
+}
+
+enum DeliverReadEventStatus {
+  READ_MODEL_SUCCESS = 0;
+  READ_MODEL_TIMEOUT = 1;
+  READ_MODEL_FAILED = 2;
+}
+
+message ReadModelEvent {
+  ReadModelEventType event_tp = 1;
+  int64 delivery_id = 2;
+  msg_data.ServerMsgData message = 3;
+}
+
+message DeliverReadEventReply { DeliverReadEventStatus status = 1; }
+
+message PullInboxRequest {
+  uint32 uid = 1;
+  int64 received_max_msg_id = 2;
+}
+
+message PullInboxReply { 
+  DeliverReadEventStatus status = 1;
+  repeated msg_data.ServerMsgData messages = 2; 
+}

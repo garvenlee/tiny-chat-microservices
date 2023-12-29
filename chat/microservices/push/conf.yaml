@@ -1,0 +1,37 @@
+process_architecture:
+  workers: 1
+  single: True
+  needs_sync: False
+  bidirectional: False
+
+local_server:
+  port: 50015
+  service_name: "PushService"
+  platform_id_path: "./platform_id"
+
+etcd_setting:
+  registered_service_prefix: "/chatp/services/PushService/"
+  discovered_service_prefix: null
+  include_services: []
+
+app_setting:
+  APPID_PREFIX: "b875bf44863911ee" # 16B
+  CHATAPP_EPOCH: 1701180600000
+
+  RMQ_HOST: "localhost"
+  RMQ_PORT: 5672
+  RMQ_USERNAME: "guest"
+  RMQ_PASSWORD: "guest"
+  RMQ_CONN_MAX_SIZE: 2
+  RMQ_CHANNEL_MAX_SIZE: 10
+
+  PUSH_EVENT_QUEUE_NAME: "chatApp:push:event"
+  PUSH_EVENT_ROUTING_KEY: "chatApp:push:event"
+  PUSH_EVENT_EXCHANGE_NAME: "chatApp:push:event"
+  PUSH_EVENT_EXCHANGE_TYPE: "direct"
+  # PUSH_EVENT_EXCHANGE_TYPE: "x-consistent-hash"
+
+develop:
+  log_level: 10
+  use_monitor: False
+  monitor_child_port: 42580

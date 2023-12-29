@@ -1,0 +1,40 @@
+syntax = "proto3";
+package services.msg_data;
+
+message MsgData {
+  // channel_number is always zero, represents user messages
+  int64 session_id = 1; // used to decide stream queue
+  uint32 sender_id = 2;
+  uint32 receiver_id = 3;
+  string text = 4;
+}
+
+// client -> Gateway
+message ClientMsgData {
+  MsgData data = 1;
+  int64 delivery_id = 2; // client message tag - filter & order
+}
+
+// Gateway -> Client
+message ServerMsgData {
+  MsgData data = 1;
+  int64 message_id = 2; // server message tag - timestamp
+}
+
+// Transfer -> RabbitMQ stream queue
+message RStreamMsgData {
+  MsgData data = 1;      // the core message entity
+  int64 delivery_id = 2; // filter: before write to / after read from cassandra
+  int64 message_id = 3;  // generated in TransferService
+}
+
+enum DLQMsgAction {
+  DLQ_ALL = 0;
+  DLQ_SESSION_ONLY = 1;
+  DLQ_INBOX_ONLY = 2;
+}
+
+message DLQMsgData {
+  DLQMsgAction action = 1;
+  RStreamMsgData data = 2;
+}

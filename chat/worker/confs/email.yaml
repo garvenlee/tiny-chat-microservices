@@ -1,0 +1,44 @@
+process_architecture:
+  workers: 1
+  single: True
+  needs_sync: False
+  bidirectional: False
+
+local_server:
+  port: 50030
+  service_name: "EmailService"
+  platform_id_path: "./platform_ids/email"
+
+etcd_setting:
+  registered_service_prefix: null
+  discovered_service_prefix: null
+  include_services: []
+
+app_setting:
+  APPID_PREFIX: "b875bf44863911ee" # 16B
+
+  RMQ_HOST: "localhost"
+  RMQ_PORT: 5672
+  RMQ_USERNAME: "guest"
+  RMQ_PASSWORD: "guest"
+  RMQ_CONN_MAX_SIZE: 2
+  RMQ_CHANNEL_MAX_SIZE: 10
+
+  EMAIL_EXCHANGE_NAME: "chatApp:email"
+  EMAIL_EXCHANGE_TYPE: "direct"
+  EMAIL_QUEUE_NAME: "chatApp:email:user_register"
+  EMAIL_ROUTING_KEY: "chatApp:email:user_register"
+  EMAIL_PUBLISHER: "ailsalex@qq.com"
+
+  # TODO Check: Email sender maybe has its ratelimiter.
+  EMAIL_HOST_NAME: "smtp.qq.com"
+  EMAIL_PORT: 587
+  EMAIL_USERNAMAE: "Username of your email"
+  EMAIL_PASSWORD: "Password of your email"
+  EMAIL_FROM_ADDRESS: "What you like"
+  NUM_EMAIL_SUBS: 10
+
+develop:
+  log_level: 10 # ignored in current version
+  use_monitor: False # only used in development
+  monitor_child_port: 42580

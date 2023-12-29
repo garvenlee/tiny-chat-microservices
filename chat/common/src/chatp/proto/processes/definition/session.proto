@@ -1,0 +1,17 @@
+syntax = "proto3";
+package chatp;
+
+enum DeviceType {
+  Terminal = 0;
+  PC = 1;
+  Web = 2;
+  Andriod = 3;
+  IOS = 4;
+}
+
+message UserSession {
+  string wsid = 1;
+  repeated DeviceType device_type = 2;
+  int64 last_online_time = 3;
+  optional int64 last_offline_time = 4;
+}

@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+enum MSG {
+  Get_Friends_Request = 0;
+  Get_Friends_Response = 1;
+  Send_Message_Request = 2;
+  Send_Message_Response = 3;
+  Friend_Notification = 11;
+  Message_Notification = 12;
+  Welcome_Notification = 13;
+}
+
+/*下面定义具体的消息内容，MSG枚举中的每个消息ID，如果有消息体，则会对应一个message
+ * 定义，如果无消息体则不必要*/
+/*Login_Request 消息ID对应的消息名称为LoginRequest ；
+ * 规则为取掉下划线，有利于某些自动化编码工具编写自动化代码*/
+message LoginRequest {
+  bytes username = 1;
+  optional string password = 2;
+}
+
+message LoginResponse { fixed32 ttl = 1; }
+
+/*没有对应的MSG id，则为其它
+ * 消息的字段，作为子消息，可以消息嵌套定义，也可以放在外面，个人习惯放在外部。*/
+
+message Friend {
+  bytes name = 1;
+  optional bool online = 2;
+}
+
+message GetFriendsResponse { repeated Friend friends = 1; }
+
+message SendMessageRequest {
+  optional bytes receiver = 1;
+  bytes text = 2;
+}
+
+message FriendNotification {
+  bytes name = 1;
+  optional bool online = 2;
+}
+
+message MessageNotification {
+  bytes sender = 1;
+  bytes text = 2;
+  string timestamp = 3;
+}
+
+message WelcomeNotification { bytes text = 1; }
+
+/*请求消息集合，把所有的
+ * XxxxxRequest消息全部集合在一起，使用起来类似于C语言的联合体，全部使用optional字段，任何时刻根据MSG
+ * 的id值，最多只有一个有效性，
+ * 从程序的逻辑上去保证，编译器（不管是protoc还是具体语言的编译器都无法保证）*/
+message Request {
+  optional LoginRequest login = 1;
+  optional SendMessageRequest send_message = 2;
+}
+
+/*与Request作用相同，把所有的XxxxResponse消息集合在一起，当作联合体使用，不过额外多了几个字段用于表示应答的结果*/
+message Response {
+  bool result = 1; // true表示应答成功，false表示应答失败
+  bool last_response =
+      2; // 一个请求可以包含多个应答，用于指示是否为最后一个应答
+  optional bytes error_describe = 3; // result == false时，用于描述错误信息
+  optional LoginResponse login = 4;
+  optional GetFriendsResponse get_friends = 5;
+}
+
+/*与Request相同,把所有的XxxxxNotification消息集合在一起当作联合体使用.*/
+message Notification {
+  optional FriendNotification friend = 1;
+  optional MessageNotification msg = 2;
+  optional WelcomeNotification welcome = 3;
+}
+
+/*顶层消息，包含所有的Request，Response，Notification，具体包含哪个消息又 MSG
+ * msg_type字段决定，程序逻辑去保证msg_type和具体的消息进行匹配*/
+
+message Message {
+  MSG msg_type = 1;
+  fixed32 sequence =
+      2; //消息系列号，主要用于Request和Response，Response的值必须和Request相同，使得发送端可以进行事务匹配处理
+  optional fixed32 session_id = 3;
+  optional Request request = 4;
+  optional Response response = 5;
+  optional Notification notification = 6;
+}

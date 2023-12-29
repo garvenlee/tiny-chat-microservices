@@ -1,0 +1,37 @@
+process_architecture:
+  workers: 1
+  single: True
+  needs_sync: False
+  bidirectional: True
+
+local_server:
+  port: 50021
+  service_name: "FriendWorkerToPush"
+  platform_id_path: "./platform_ids/friend_to_push_worker"
+
+etcd_setting:
+  registered_service_prefix: null
+  discovered_service_prefix: "/chatp/services/"
+  include_services: ["PushService"]
+
+app_setting:
+  APPID_PREFIX: "b875bf44863911ee" # 16B
+
+  RMQ_HOST: "localhost"
+  RMQ_PORT: 5672
+  RMQ_USERNAME: "guest"
+  RMQ_PASSWORD: "guest"
+  RMQ_CONN_MAX_SIZE: 2
+  RMQ_CHANNEL_MAX_SIZE: 10
+
+  NUM_FRIEND_PUBS: 10
+
+  FRIEND_EXCHANGE_NAME: "chatApp:friend"
+  FRIEND_EXCHANGE_TYPE: "fanout"
+  FRIEND_QUEUE_NAME_TO_POSTGRES: "chatApp:friend:friend_request_to_psql"
+  FRIEND_QUEUE_NAME_TO_PUSH: "chatApp:friend:friend_request_to_push"
+
+develop:
+  log_level: 10
+  use_monitor: False
+  monitor_child_port: 42580

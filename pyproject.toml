@@ -1,0 +1,83 @@
+[tool.poetry]
+name = "tiny-chat-microservices"
+version = "0.0.1"
+description = ""
+authors = ["garvenlee <roederx@qq.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.11, <3.13"
+# chatp = "^0.0.1"
+
+uvloop = "^0.19.0"
+anyio = "^4.0.0"
+aiomisc = "^17.3.21"
+aiolimiter = "^1.1.0"
+aiopipe = "^0.2.2"
+async-sender = "^2.0.0"
+cachetools = "^5.3.1"
+pyjwt = "^2.8.0"
+pydigest = "^1.8"
+werkzeug = "^3.0.1"
+uhashring = "^2.3"
+hash-ring-rs = "^0.1.5"
+snowflake-id = "^0.0.5"
+uuid6 = "^2023.5.2"
+pyyaml = "^6.0.1"
+termcolor = "^2.3.0"
+sortedcontainers = "^2.4.0"
+
+# protocol framework
+httpx = "^0.25.0"
+websockets = "^12.0"
+uvicorn = "^0.24.0.post1"
+starlette = "^0.33.0"
+blacksheep = "^2.0.1"
+blacksheep-prometheus = "^0.1.8"
+grpcio = "^1.58.0"
+grpcio-health-checking = "^1.58.0"
+
+# middleware
+redis = "^5.0.0"
+aio-pika = "^9.3.1"
+rstream = "^0.15.0"
+rbfly = "^0.8.0"
+asyncpg = "^0.29.0"
+cassandra-driver = "^3.28.0"
+acsylla = "^0.1.8b0"
+aetcd = "^1.0.0a4"
+
+# trace
+opentelemetry-sdk = "^1.20.0"
+opentelemetry-instrumentation-starlette = "^0.41b0"
+opentelemetry-instrumentation-redis = "^0.41b0"
+opentelemetry-instrumentation-grpc = "^0.41b0"
+opentelemetry-instrumentation-asyncpg = "^0.41b0"
+opentelemetry-instrumentation-asgi = "^0.41b0"
+opentelemetry-instrumentation-httpx = "^0.41b0"
+opentelemetry-instrumentation-aio-pika = "^0.42b0"
+opentelemetry-exporter-otlp-proto-grpc = "^1.20.0"
+
+# editor
+mypy = "^1.6.1"
+black = "^23.9.1"
+packaging = "^23.1"
+types-protobuf = "^4.24.0.4"
+
+# test
+psutil = "^5.9.5"
+locust = "^2.16.1"
+aiomonitor = "^0.6.0"
+py-spy = "^0.3.14"
+guppy3 = "^3.1.4.post1"
+memory-profiler = "^0.61.0"
+robotframework = "^6.1.1"
+
+# reference
+grpcio-tools = "^1.59.2"
+aioquic = "^0.9.23"
+matplotlib = "^3.8.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

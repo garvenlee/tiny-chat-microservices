@@ -1,0 +1,86 @@
+syntax = "proto3";
+package services.friend; // compiled in the /rpc
+
+service Friend {
+  rpc GetFriendList(FriendListRequest) returns (FriendListReply) {}
+  rpc AddFriend(FriendRequest) returns (FriendRequestReply) {}
+  rpc AddFriendBatch(FriendRequestBatch) returns (FriendRequestReply) {}
+  rpc ConfirmFriend(FriendConfirm) returns (FriendConfirmReply) {}
+}
+
+enum FriendOpStatus {
+  FRIEND_SUCCESS = 0;
+  FRIEND_FAILED = 1;
+  FRIEND_TIMEOUT = 2;
+}
+
+enum FriendRequestAction {
+  ACCEPTED = 0;
+  REJECTED = 1;
+  IGNORED = 2;
+}
+
+enum FriendEventType {
+  FRIEND_REQUEST = 0;
+  FRIEND_CONFIRM = 1;
+  FRIEND_SESSION = 2;
+}
+
+message FriendDetailedInfo {
+  int64 session_id = 1;
+  uint32 seq = 2;
+  bytes uid = 3;
+  string username = 4;
+  string email = 5;
+  optional string remark = 6;
+}
+
+message FriendListRequest { uint32 seq = 1; }
+
+message FriendListReply {
+  FriendOpStatus status = 1;
+  repeated FriendDetailedInfo friends = 2;
+}
+
+message RelationLink {
+  uint32 request_id = 1;
+  uint32 address_id = 2;
+}
+
+message FriendRequest {
+  bytes uid = 1;
+  string email = 2;
+  string username = 3;
+  RelationLink link = 4;
+  optional string request_msg = 6;
+}
+
+message FriendRequestBatch { repeated FriendRequest requests = 1; }
+
+message FriendConfirm {
+  RelationLink link = 1;
+  FriendRequestAction action = 2;
+  optional int64 session_id = 3;
+}
+
+message FriendSession {
+  RelationLink link = 1;
+  int64 session_id = 3;
+  // string session_id = 3;
+}
+
+message FriendEvent {
+  FriendEventType evt_tp = 1;
+  oneof evt_entity {
+    FriendRequest request = 2;
+    FriendConfirm confirm = 3;
+    FriendSession session = 4;
+  }
+}
+
+message FriendRequestReply { FriendOpStatus status = 1; }
+message FriendConfirmReply { FriendOpStatus status = 1; }
+
+message FriendRequestAck { RelationLink link = 1; }
+message FriendConfirmAck { RelationLink link = 1; }
+message FriendSessionAck { RelationLink link = 1; }

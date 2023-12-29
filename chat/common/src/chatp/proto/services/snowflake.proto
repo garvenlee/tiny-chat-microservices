@@ -1,0 +1,16 @@
+syntax = "proto3";
+package services.snowflake; // compiled in the /rpc
+
+service Snowflake {
+  rpc flickClock(SnowflakeRequest) returns (SnowflakeReply) {}
+}
+
+enum BusinessKind {
+  SNOWFLAKE_SESSION = 0;
+  SNOWFLAKE_MESSAGE = 1;
+  SNOWFLAKE_USER_DEFINED = 2;
+}
+
+message SnowflakeRequest { BusinessKind kind = 1; }
+
+message SnowflakeReply { int64 snowflake_id = 1; }

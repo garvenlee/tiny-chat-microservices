@@ -1,0 +1,35 @@
+syntax = "proto3";
+package chatp;
+
+enum EventType {
+  SERVICE_CHANGE = 0;
+  LOAD_HINT = 1;
+  USER_EVENT = 2;
+}
+
+enum ServiceEventType {
+  SERVICE_ONLINE = 0;
+  SERVICE_OFFLINE = 1;
+}
+
+message ServiceEvent {
+  ServiceEventType srv_tp = 1;
+  string srv_name = 2;
+  string srv_addr = 3;
+  string platform_id = 4;
+}
+
+message LoadHintEvent {
+  string srv_name = 1;
+  string srv_addr = 2;
+  bytes weight = 3;
+}
+
+message Event {
+  EventType evt_tp = 1;
+  oneof evt_entity {
+    ServiceEvent srv_evt = 2;
+    LoadHintEvent load_evt = 3;
+    bytes user_evt = 4;
+  }
+}

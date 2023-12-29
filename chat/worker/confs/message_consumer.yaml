@@ -1,0 +1,45 @@
+process_architecture:
+  workers: 1
+  single: True
+  needs_sync: False
+  bidirectional: True
+
+local_server:
+  port: 50025
+  service_name: "MessageConsumer"
+  platform_id_path: "./platform_ids/message_consumer"
+
+etcd_setting:
+  registered_service_prefix: null
+  discovered_service_prefix: "/chatp/services/"
+  include_services: ["CassMessageService", "DownstreamTransferService"]
+
+app_setting:
+  APPID_PREFIX: "b875bf44863911ee" # 16B
+
+  RMQ_STREAM_HOST: "localhost"
+  RMQ_STREAM_PORT: 5552
+  RMQ_STREAM_USERNAME: "guest"
+  RMQ_STREAM_PASSWORD: "guest"
+  RMQ_STREAM_NAME: "message-stream"
+
+  NUM_DLQ_PUBS: 10
+  DEAD_LETTER_QUEUE_NAME_PREFIX: "chatApp:message_consumer:dlq:"
+  DEAD_LETTER_EXCHANGE_NAME: "chatApp:message_consumer:dlq"
+  DEAD_LETTER_EXCHANGE_TYPE: "x-consistent-hash"
+
+  NUM_READ_MODEL_PUBS: 10
+  READ_MODEL_EVENT_QUEUE_NAME_PREFIX: "chatApp:read_model:event:"
+  READ_MODEL_EVENT_EXCHANGE_NAME: "chatApp:read_model:event"
+  READ_MODEL_EVENT_EXCHANGE_TYPE: "x-consistent-hash"
+
+  NUM_MESSAGE_PUBS: 10
+  PUSH_EVENT_QUEUE_NAME: "chatApp:push:event"
+  PUSH_EVENT_ROUTING_KEY: "chatApp:push:event"
+  PUSH_EVENT_EXCHANGE_NAME: "chatApp:push:event"
+  PUSH_EVENT_EXCHANGE_TYPE: "direct"
+
+develop:
+  log_level: 10
+  use_monitor: False
+  monitor_child_port: 42580

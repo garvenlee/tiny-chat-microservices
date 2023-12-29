@@ -1,0 +1,32 @@
+process_architecture:
+  workers: 1
+  single: False
+  needs_sync: False
+  bidirectional: False
+
+local_server:
+  port: 50050
+  service_name: "CassMessageService"
+  platform_id_path: "./platform_id"
+
+etcd_setting:
+  registered_service_prefix: "/chatp/services/CassMessageService/"
+  discovered_service_prefix: null
+  include_services: []
+
+app_setting:
+  APPID_PREFIX: "b875bf44863911ee" # 16B
+
+  shcema_dir: "./cql/schema"
+  query_dir: "./cql/query"
+
+  CASS_HOST: "127.0.0.1"
+  CASS_PORT: 9042
+  CASS_USERNAME: "cassandra"
+  CASS_PASSWORD: "cassandra"
+  CASS_KEYSPACE: "chatapp"
+
+develop:
+  log_level: 10
+  use_monitor: False
+  monitor_child_port: 42580

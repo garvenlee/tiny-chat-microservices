@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+message email {
+  string to_addr = 1;
+  string template = 2;
+  string link = 3;
+}

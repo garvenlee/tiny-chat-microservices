@@ -1,0 +1,58 @@
+process_architecture:
+  workers: 1
+  single: True
+  needs_sync: False
+  bidirectional: True
+
+local_server:
+  port: 10000
+  service_name: "HttpGateway"
+  platform_id_path: "./platform_id"
+
+etcd_setting:
+  registered_service_prefix: "/chatp/HttpGateway/"
+  discovered_service_prefix: "/chatp/services/"
+  include_services:
+    [
+      "UserService",
+      "AuthService",
+      "SnowflakeService",
+      "CassMessageService",
+      "DownstreamTransferService",
+    ]
+
+app_setting:
+  APPID_PREFIX: "b875bf44863911ee" # 16B
+
+  RMQ_HOST: "localhost"
+  RMQ_PORT: 5672
+  RMQ_USERNAME: "guest"
+  RMQ_PASSWORD: "guest"
+  RMQ_CONN_MAX_SIZE: 2
+  RMQ_CHANNEL_MAX_SIZE: 10
+
+  NUM_EMAIL_PUBS: 10
+  NUM_FRIEND_PUBS: 10
+
+  EMAIL_EXCHANGE_NAME: "chatApp:email"
+  EMAIL_EXCHANGE_TYPE: "direct"
+  EMAIL_QUEUE_NAME: "chatApp:email:user_register"
+  EMAIL_ROUTING_KEY: "chatApp:email:user_register"
+  EMAIL_PUBLISHER: "ailsalex@qq.com"
+
+  # TODO Check: Email sender maybe has its ratelimiter.
+  EMAIL_HOST_NAME: "smtp.qq.com"
+  EMAIL_PORT: 587
+  EMAIL_USERNAMAE: "username of your email"
+  EMAIL_PASSWORD: "password of your password"
+  EMAIL_FROM_ADDRESS: "What you like"
+
+  FRIEND_EXCHANGE_NAME: "chatApp:friend"
+  FRIEND_EXCHANGE_TYPE: "fanout"
+  FRIEND_QUEUE_NAME_TO_POSTGRES: "chatApp:friend:friend_request_to_psql"
+  FRIEND_QUEUE_NAME_TO_PUSH: "chatApp:friend:friend_request_to_push"
+
+develop:
+  log_level: 10
+  use_monitor: False
+  monitor_child_port: 42580

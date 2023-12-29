@@ -1,0 +1,100 @@
+syntax = "proto3";
+package services.push; // compiled in /rpc
+
+// TODO how to design the publish resp?
+// 1.when data enters PushService, then responds
+// 2.when data is forwarded to gateway, then responds
+// 3.when dats is pushed to user, then responds
+service Push {
+  rpc SubscribeStream(stream ConsumerFeedback)
+      returns (stream PubEventToGateway);
+  rpc PublishNotification(PubNotification) returns (PubNotificationAck);
+  rpc ControlMessage(ControlMessageData) returns (ControlMessageAck) {};
+}
+
+enum PubEventType {
+  PUSH_FRIEND_REQUEST = 0;
+  PUSH_FRIEND_CONFIRM = 2;
+  PUSH_FRIEND_SESSION = 4;
+  PUSH_USER_KICKED_OFF = 6;
+  PUSH_USER_MESSAGE = 8;
+  PUSH_USER_EVENT = 10;
+
+  ACK_ACTION = 1;
+  ACK_FRIEND_REQUEST = 3;
+  ACK_FRIEND_CONFIRM = 5;
+  ACK_FRIEND_SESSION = 7;
+  ACK_USER_MESSAGE = 9;
+  ACK_USER_EVENT = 11;
+}
+
+enum PubStatus {
+  PUSH_SUCCESS = 0;
+  PUSH_TIMEOUT = 1;
+  PUSH_FAILED = 2;
+  PUSH_OFFLINE = 3;
+}
+
+message MessageLog {
+  PubEventType evt_tp = 1;
+  int32 channel_number = 2;
+  uint32 delivery_id = 3;
+}
+
+// Gateway --> User (From PushSrv: channel_number & delivery_id)
+message PubEventToUser {
+  MessageLog log = 1;
+  optional bytes evt_data = 2;
+}
+
+message PubEventAckFromUser { repeated MessageLog logs = 1; }
+
+// user --> Gateway (PushUserMessage & AckGatewayPush)
+message PubEventFromUser {
+  PubEventType evt_tp = 1;
+  bytes payload = 2;
+}
+
+message PubEventAckToUser { // means message sent successfully
+  bool acked = 1;
+  int64 message_id = 2;
+}
+
+// Gateway <---> PushRpc
+message PubEventToGateway {
+  PubEventType evt_tp = 1;
+  uint32 delivery_id = 2;
+  bytes evt_data = 3;
+}
+
+message PubEventAckFromGateway {
+  uint32 start_id = 1;
+  uint32 end_id = 2;
+}
+
+message ConsumerFeedback {
+  PubStatus status = 1;
+  PubEventAckFromGateway confirm = 2;
+}
+
+message ControlMessageData {}
+
+message ControlMessageAck {}
+
+// publish towards PushService
+message PubUserMessage {
+  uint32 address_id = 1;
+  bytes payload = 2;
+}
+
+message PubNotificationHeader {
+  PubEventType data_type = 1;
+  uint32 address_id = 2;
+}
+
+message PubNotification {
+  PubNotificationHeader header = 1;
+  bytes payload = 2;
+}
+
+message PubNotificationAck { PubStatus status = 1; }

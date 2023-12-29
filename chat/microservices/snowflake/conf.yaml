@@ -1,0 +1,29 @@
+process_architecture:
+  workers: 1
+  single: True
+  needs_sync: True
+  bidirectional: False
+
+local_server:
+  port: 50030
+  service_name: "SnowflakeService"
+  platform_id_path: "./platform_id"
+
+etcd_setting:
+  registered_service_prefix: "/chatp/services/SnowflakeService/"
+  discovered_service_prefix: null
+  include_services: []
+
+app_setting:
+  APPID_PREFIX: "b875bf44863911ee" # 16B
+  CHATAPP_EPOCH: 1701180600000
+  BUSINESS_KIND: "FRIEND"
+
+  ETCD_INSTANCE_ID_PREFIX: "/chatp/instance_ids/platform/"
+  ETCD_INSTANCE_ID_LOCK: "/chatp/instance_ids/lock"
+  REDIS_INSTANCE_ID_KEY: "chatp:instance_id_seq:int"
+
+develop:
+  log_level: 10
+  use_monitor: False
+  monitor_child_port: 42580

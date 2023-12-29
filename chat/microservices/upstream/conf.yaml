@@ -1,0 +1,29 @@
+process_architecture:
+  workers: 1
+  single: True
+  needs_sync: False
+  bidirectional: True
+
+local_server:
+  port: 50035
+  service_name: "UpstreamTransferService"
+  platform_id_path: "./platform_id"
+
+etcd_setting:
+  registered_service_prefix: "/chatp/services/UpstreamTransferService/"
+  discovered_service_prefix: "/chatp/services/"
+  include_services: ["SnowflakeService"]
+
+app_setting:
+  APPID_PREFIX: "b875bf44863911ee" # 16B
+
+  RMQ_STREAM_HOST: "localhost"
+  RMQ_STREAM_PORT: 5552
+  RMQ_STREAM_USERNAME: "guest"
+  RMQ_STREAM_PASSWORD: "guest"
+  RMQ_STREAM_NAME: "message-stream"
+
+develop:
+  log_level: 10
+  use_monitor: False
+  monitor_child_port: 42580

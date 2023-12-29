@@ -1,0 +1,14 @@
+syntax = "proto3";
+package chatp;
+
+message LoadItem {
+  string srv_addr = 1;
+  int32 usage_count = 2;
+}
+
+message LoadInfo {
+  int32 proc_seq = 1;
+  string srv_name = 2;
+  int32 total_count = 3;
+  repeated LoadItem loads = 4;
+}

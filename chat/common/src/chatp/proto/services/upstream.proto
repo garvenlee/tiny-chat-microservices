@@ -1,0 +1,20 @@
+syntax = "proto3";
+package services.upstream;
+
+import "msg_data.proto";
+
+service UpstreamTransfer {
+  rpc DeliverMessage(DeliverUpMsgRequest) returns (DeliverUpMsgReply) {};
+}
+
+enum UpstreamTransferStatusCode {
+  UPSTREAM_DELIVERY_SUCCESS = 0;
+  UPSTREAM_DELIVERY_TIMEOUT = 1;
+  UPSTREAM_DELIVERY_FAILED = 2;
+}
+
+message DeliverUpMsgRequest { msg_data.ClientMsgData message_data = 1; }
+message DeliverUpMsgReply {
+  UpstreamTransferStatusCode code = 1;
+  optional int64 message_id = 2;
+}

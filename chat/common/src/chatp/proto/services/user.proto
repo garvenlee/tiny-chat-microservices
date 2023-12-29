@@ -1,0 +1,155 @@
+syntax = "proto3";
+package services.user;
+
+service User {
+  rpc UserLogin(UserLoginRequest) returns (UserLoginReply) {}
+  rpc UserRegister(UserRegisterRequest) returns (UserRegisterReply) {}
+  rpc UserRegisterConfirm(UserRegisterConfirmRequest)
+      returns (UserRegisterConfirmReply) {}
+  rpc UserLogout(UserLogoutRequest) returns (UserLogoutReply) {}
+  rpc UserQuery(UserQueryRequest) returns (UserQueryReply) {}
+  rpc UserOnline(UserOnlineRequest) returns (UserOnlineReply) {}
+  rpc UserOffline(UserOfflineRequest) returns (UserOfflineReply) {}
+  rpc UserOnlineCheck(UserOnlineCheckRequest) returns (UserOnlineStatus) {}
+  rpc UserMultiTerminalCheck(UserMultiTerminalCheckRequest)
+      returns (UserMultiTerminalCheckReply) {}
+  rpc UserGatewayAddr(UserGatewayAddrRequest) returns (UserGatewayAddrReply) {}
+  rpc UserGatewayAddrs(UserGatewayAddrsRequest)
+      returns (UserGatewayAddrsReply) {}
+}
+
+enum UserErrorCode {
+  USER_INCORRECT_EMAIL = 0;
+  USER_INCORRECT_PWD = 1;
+  USER_NOT_EXISTS = 2;
+  USER_ALREADY_EXISTS = 3;
+  USER_DB_TIMEOUT = 4;
+  USER_REDIS_TIMEOUT = 5;
+  USER_UNKNOWN_ERROR = 6;
+}
+
+message UserDetailedInfo {
+  uint32 seq = 1;
+  bytes uid = 2;
+  string username = 3;
+  optional string email = 4;
+}
+
+message UserLoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message UserLoginReply {
+  bool success = 1;
+  optional UserErrorCode code = 2;
+  optional UserDetailedInfo user = 3;
+}
+
+message UserRegisterRequest {
+  string username = 3;
+  string email = 1;
+  string password = 2;
+}
+
+message UserRegisterReply {
+  bool success = 1;
+  optional UserErrorCode code = 2;
+  optional uint32 seq = 3;
+}
+
+message UserRegisterConfirmRequest { uint32 seq = 1; }
+message UserRegisterConfirmReply {
+  bool success = 1;
+  optional UserErrorCode code = 2;
+}
+
+message UserQueryRequest { string email = 1; }
+message UserQueryReply {
+  bool success = 1;
+  optional UserErrorCode code = 2;
+  optional UserDetailedInfo user = 3;
+}
+
+enum UserDeviceType {
+  TERMINAL = 0;
+  WEB = 1;
+  PC = 2;
+  ANDROID = 3;
+  IOS = 4;
+}
+
+// constructed in PublishNotification
+message UserKickedOff {
+  uint32 uid = 1;
+  UserDeviceType device_tp = 2;
+  int64 timestamp = 3;
+}
+
+message UserLogoutRequest {
+  uint32 seq = 1;
+  UserDeviceType device_tp = 2;
+}
+
+message UserLogoutReply {
+  bool success = 1;
+  optional UserErrorCode code = 2;
+}
+
+message UserOnlineRequest {
+  uint32 seq = 1;
+  UserDeviceType device_tp = 2;
+  string gateway_addr = 3;
+  int64 online_timestamp = 4;
+}
+message UserOnlineReply {
+  bool success = 1;
+  optional UserErrorCode code = 2;
+}
+
+message UserOfflineRequest {
+  uint32 seq = 1;
+  UserDeviceType device_tp = 2;
+  int64 offline_timestamp = 3;
+}
+message UserOfflineReply {
+  bool success = 1;
+  optional UserErrorCode code = 2;
+}
+
+message UserOnlineCheckRequest { uint64 seq = 1; }
+
+message UserOnlineStatus {
+  bool success = 1;
+  optional UserErrorCode code = 2;
+  bool online = 3;
+}
+
+message UserMultiTerminalCheckRequest {
+  uint32 seq = 1;
+  UserDeviceType device_tp = 2;
+}
+
+message UserMultiTerminalCheckReply {
+  bool success = 1;
+  optional UserErrorCode code = 2;
+  bool exists = 3;
+}
+
+message UserGatewayAddrRequest {
+  uint32 seq = 1;
+  UserDeviceType device_tp = 2;
+}
+message UserGatewayAddrReply {
+  bool success = 1;
+  optional UserErrorCode code = 2;
+  string gateway_addr = 3;
+}
+
+message UserGatewayAddrsRequest { uint32 seq = 1; }
+message UserGatewayAddrsReply {
+  bool success = 1;
+  optional UserErrorCode code = 2;
+  repeated string platform_types = 3;
+  repeated string gateway_addrs = 4;
+}

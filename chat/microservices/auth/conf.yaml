@@ -1,0 +1,26 @@
+process_architecture:
+  workers: 1
+  single: False
+  needs_sync: False
+  bidirectional: True
+
+local_server:
+  port: 50011
+  service_name: "AuthService"
+  platform_id_path: "./platform_id"
+
+etcd_setting:
+  registered_service_prefix: "/chatp/services/AuthService/"
+  discovered_service_prefix: "/chatp/services/"
+  include_services: ["UserService"]
+
+app_setting:
+  APPID_PREFIX: "b875bf44863911ee" # 16B
+
+  shcema_dir: "./sql/schema"
+  query_dir: "./sql/query"
+
+develop:
+  log_level: 10
+  use_monitor: False
+  monitor_child_port: 42580

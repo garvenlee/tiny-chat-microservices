@@ -153,7 +153,7 @@ class AsyncMyBackend:
         return AsyncMyTransaction(self, isolation, readonly, deferrable)
 
 
-# TODO this design adds twice attribute find
+# TODO this design adds twice attribute query
 class AsyncMyConnection:
     __slots__ = (
         "_pool_acquire",

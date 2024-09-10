@@ -48,7 +48,7 @@ def post_fork(proc_manager: ProcessManager, worker: WorkerProcess):
 def create_socket(
     bind: str,
     type_: int = SOCK_STREAM,
-    reuser_port: bool = True,
+    reuse_port: bool = True,
 ) -> socket:
     bind = bind.replace("[", "").replace("]", "")
     try:
@@ -58,7 +58,7 @@ def create_socket(
         host, port = bind, 8000
 
     sock = socket(AF_INET6 if ":" in host else AF_INET, type_)
-    if reuser_port:
+    if reuse_port:
         sock.setsockopt(SOL_SOCKET, SO_REUSEPORT, 1)
     sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
 

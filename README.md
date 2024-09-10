@@ -25,6 +25,7 @@ conda activate py311
 
 ```Shell
 cd chat
+pip install poetry
 poetry init
 cd common
 python setup.py install
@@ -39,7 +40,7 @@ You can use docker, Linux APT or whatever you can to deploy these dependencies
 
 3.ETCD
 
-4.PostgresSQL
+4.PostgreSQL
 
 5.Cassandra
 

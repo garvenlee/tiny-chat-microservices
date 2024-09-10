@@ -156,7 +156,7 @@ async def async_starter(lifespan: LifeSpan):
             console_locals = monitor.console_locals
             console_locals["users"] = []
             console_locals["proc"] = proc
-            console_locals["data"]: dict[UID, ConsoleUserInfo] = {}
+            console_locals["data"]: dict[UID, ConsoleUserInfo] = {}  # type: ignore
             console_locals["session_manager"] = session_manager
             console_locals["task_manager"] = task_manager
             console_locals["push_manager"] = push_manager
